@@ -169,12 +169,14 @@ public class DataManagerService extends Service {
                 boolean isInsertSuccess;
 
                 /*
-                Gunakan ini untuk insert query dengan menggunakan standar query
+                 * Gunakan kode ini untuk query insert yang transactional
+                 * Begin Transaction
                  */
                 try {
                     mahasiswaHelper.beginTransaction();
 
                     for (MahasiswaModel model : mahasiswaModels) {
+                        //Jika service atau activity dalam keadaan destroy maka akan menghentikan perulangan
                         if (isCancelled()) {
                             break;
                         } else {
@@ -184,13 +186,19 @@ public class DataManagerService extends Service {
                         }
                     }
 
+                    //Jika service atau activity dalam keadaan destroy maka data insert tidak di essekusi
                     if (isCancelled()) {
                         isInsertSuccess = false;
                         appPreference.setFrstRun(true);
                         weakCallback.get().onLoadCancel();
                     } else {
+                        // Jika semua proses telah di set success maka akan di commit ke database
                         mahasiswaHelper.setTransactionSuccess();
                         isInsertSuccess = true;
+                        /*
+                     Set preference first run ke false
+                     Agar proses preload tidak dijalankan untuk kedua kalinya
+                     */
                         appPreference.setFrstRun(false);
                     }
                 } catch (Exception e) {
