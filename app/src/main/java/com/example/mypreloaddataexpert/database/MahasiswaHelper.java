@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 
 import com.example.mypreloaddataexpert.model.MahasiswaModel;
 
@@ -67,13 +68,6 @@ public class MahasiswaHelper {
         return arrayList;
     }
 
-    public long insert(MahasiswaModel mahasiswaModel) {
-        ContentValues initialValues = new ContentValues();
-        initialValues.put(NAMA, mahasiswaModel.getName());
-        initialValues.put(NIM, mahasiswaModel.getNim());
-        return database.insert(TABLE_NAME, null, initialValues);
-    }
-
     public ArrayList<MahasiswaModel> getDataByName(String nama) {
         Cursor cursor = database.query(TABLE_NAME, null, NAMA + " LIKE ?", new String[]{nama}, null, null, _ID + " ASC", null);
         cursor.moveToFirst();
@@ -92,5 +86,33 @@ public class MahasiswaHelper {
         }
         cursor.close();
         return arrayList;
+    }
+
+    public long insert(MahasiswaModel mahasiswaModel) {
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(NAMA, mahasiswaModel.getName());
+        initialValues.put(NIM, mahasiswaModel.getNim());
+        return database.insert(TABLE_NAME, null, initialValues);
+    }
+
+    public void beginTransaction() {
+        database.beginTransaction();
+    }
+
+    public void setTransactionSuccess() {
+        database.setTransactionSuccessful();
+    }
+
+    public void endTransaction() {
+        database.endTransaction();
+    }
+
+    public void insertTransaction(MahasiswaModel mahasiswaModel) {
+        String sql = "INSERT INTO " + TABLE_NAME + " (" + NAMA + ", " + NIM + ") VALUES (?, ?)";
+        SQLiteStatement stmt = database.compileStatement(sql);
+        stmt.bindString(1, mahasiswaModel.getName());
+        stmt.bindString(2, mahasiswaModel.getNim());
+        stmt.execute();
+        stmt.clearBindings();
     }
 }

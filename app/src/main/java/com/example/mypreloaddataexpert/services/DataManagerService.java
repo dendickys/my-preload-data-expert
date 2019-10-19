@@ -172,18 +172,22 @@ public class DataManagerService extends Service {
                 Gunakan ini untuk insert query dengan menggunakan standar query
                  */
                 try {
+                    mahasiswaHelper.beginTransaction();
                     for (MahasiswaModel model : mahasiswaModels) {
-                        mahasiswaHelper.insert(model);
+                        mahasiswaHelper.insertTransaction(model);
                         progress += progressDiff;
                         publishProgress((int) progress);
                     }
 
+                    mahasiswaHelper.setTransactionSuccess();
                     isInsertSuccess = true;
                     appPreference.setFrstRun(false);
                 } catch (Exception e) {
                     // Jika gagal maka do nothing
                     Log.e(TAG, "doInBackground: Exception");
                     isInsertSuccess = false;
+                } finally {
+                    mahasiswaHelper.endTransaction();
                 }
                 // Close helper ketika proses query sudah selesai
                 mahasiswaHelper.close();
