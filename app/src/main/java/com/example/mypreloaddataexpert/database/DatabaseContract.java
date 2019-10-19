@@ -2,11 +2,11 @@ package com.example.mypreloaddataexpert.database;
 
 import android.provider.BaseColumns;
 
-public class DatabaseContract {
-    static String TABLE_NAME = "table_mahasiswa";
+class DatabaseContract {
+    public static String TABLE_NAME = "table_mahasiswa";
 
-    static final class MahasiswaColumns implements BaseColumns {
-        static String NAMA = "nama";
-        static String NIM = "nim";
+    public static final class MahasiswaColumns implements BaseColumns {
+        public static final String NAMA = "nama";
+        public static final String NIM = "nim";
     }
 }
